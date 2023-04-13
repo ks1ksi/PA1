@@ -8,6 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -40,22 +41,25 @@ class MainActivity : AppCompatActivity() {
         wrongColor = ContextCompat.getColor(this, R.color.wrong)
 
         val wordRecyclerView = findViewById<RecyclerView>(R.id.wordleWordList)
+        wordRecyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
         wordRecyclerView.layoutManager = LinearLayoutManager(this)
         val wordAdapter = WordAdapter(wordList)
         wordRecyclerView.adapter = wordAdapter
 
         val rightLetterRecyclerView = findViewById<RecyclerView>(R.id.rightLetterList)
+        rightLetterRecyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
         rightLetterRecyclerView.layoutManager = LinearLayoutManager(this)
         val rightLetterAdapter = LetterAdapter(rightLetterList)
         rightLetterRecyclerView.adapter = rightLetterAdapter
 
-        val wrongPositionLetterRecyclerView =
-            findViewById<RecyclerView>(R.id.wrongPositionLetterList)
+        val wrongPositionLetterRecyclerView = findViewById<RecyclerView>(R.id.wrongPositionLetterList)
+        wrongPositionLetterRecyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
         wrongPositionLetterRecyclerView.layoutManager = LinearLayoutManager(this)
         val wrongPositionLetterAdapter = LetterAdapter(wrongPositionLetterList)
         wrongPositionLetterRecyclerView.adapter = wrongPositionLetterAdapter
 
         val wrongLetterRecyclerView = findViewById<RecyclerView>(R.id.wrongLetterList)
+        wrongLetterRecyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
         wrongLetterRecyclerView.layoutManager = LinearLayoutManager(this)
         val wrongLetterAdapter = LetterAdapter(wrongLetterList)
         wrongLetterRecyclerView.adapter = wrongLetterAdapter
