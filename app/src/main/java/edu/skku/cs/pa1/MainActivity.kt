@@ -31,38 +31,41 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        initColors()
         loadWords(stringSet)
-        answer = stringSet.shuffled().first().toString()
+        answer = stringSet.random()
         Log.i("stringSetSize", stringSet.size.toString())
         Log.i("answer", answer)
 
-        rightColor = ContextCompat.getColor(this, R.color.right)
-        wrongPositionColor = ContextCompat.getColor(this, R.color.wrong_position)
-        wrongColor = ContextCompat.getColor(this, R.color.wrong)
-
         val wordRecyclerView = findViewById<RecyclerView>(R.id.wordleWordList)
-        wordRecyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
-        wordRecyclerView.layoutManager = LinearLayoutManager(this)
-        val wordAdapter = WordAdapter(wordList)
-        wordRecyclerView.adapter = wordAdapter
-
         val rightLetterRecyclerView = findViewById<RecyclerView>(R.id.rightLetterList)
-        rightLetterRecyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
-        rightLetterRecyclerView.layoutManager = LinearLayoutManager(this)
-        val rightLetterAdapter = LetterAdapter(rightLetterList)
-        rightLetterRecyclerView.adapter = rightLetterAdapter
-
         val wrongPositionLetterRecyclerView = findViewById<RecyclerView>(R.id.wrongPositionLetterList)
-        wrongPositionLetterRecyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
-        wrongPositionLetterRecyclerView.layoutManager = LinearLayoutManager(this)
-        val wrongPositionLetterAdapter = LetterAdapter(wrongPositionLetterList)
-        wrongPositionLetterRecyclerView.adapter = wrongPositionLetterAdapter
-
         val wrongLetterRecyclerView = findViewById<RecyclerView>(R.id.wrongLetterList)
-        wrongLetterRecyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
-        wrongLetterRecyclerView.layoutManager = LinearLayoutManager(this)
+
+        val wordAdapter = WordAdapter(wordList)
+        val rightLetterAdapter = LetterAdapter(rightLetterList)
+        val wrongPositionLetterAdapter = LetterAdapter(wrongPositionLetterList)
         val wrongLetterAdapter = LetterAdapter(wrongLetterList)
-        wrongLetterRecyclerView.adapter = wrongLetterAdapter
+
+        val recyclerViews = listOf(
+            wordRecyclerView,
+            rightLetterRecyclerView,
+            wrongPositionLetterRecyclerView,
+            wrongLetterRecyclerView
+        )
+
+        val adapters = listOf(
+            wordAdapter,
+            rightLetterAdapter,
+            wrongPositionLetterAdapter,
+            wrongLetterAdapter
+        )
+
+        recyclerViews.forEachIndexed { index, recyclerView ->
+            recyclerView.layoutManager = LinearLayoutManager(this)
+            recyclerView.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
+            recyclerView.adapter = adapters[index]
+        }
 
         val wordleTextView = findViewById<TextView>(R.id.wordleText)
         val submitButton = findViewById<Button>(R.id.submitButton)
@@ -71,23 +74,15 @@ class MainActivity : AppCompatActivity() {
             val input = wordleTextView.text.toString().lowercase()
             if (stringSet.contains(input)) {
                 Log.i("input", input)
-
                 calculateInput(input)
-
-                rightLetterAdapter.notifyDataSetChanged()
-                wrongPositionLetterAdapter.notifyDataSetChanged()
-                wrongLetterAdapter.notifyDataSetChanged()
-
-                wordAdapter.notifyItemInserted(wordList.size - 1)
+                notifyToAdapters(rightLetterAdapter, wrongPositionLetterAdapter, wrongLetterAdapter, wordAdapter)
                 wordRecyclerView.scrollToPosition(wordList.size - 1)
-
             } else {
                 Log.i("word", "not found")
                 Toast.makeText(this, "Word $input not in dictionary!", Toast.LENGTH_SHORT).show()
             }
             wordleTextView.text = ""
         }
-
     }
 
     private fun loadWords(stringSet: MutableSet<String>) {
@@ -96,6 +91,19 @@ class MainActivity : AppCompatActivity() {
                 stringSet.add(it)
             }
         }
+    }
+
+    private fun initColors() {
+        rightColor = ContextCompat.getColor(this, R.color.right)
+        wrongPositionColor = ContextCompat.getColor(this, R.color.wrong_position)
+        wrongColor = ContextCompat.getColor(this, R.color.wrong)
+    }
+
+    private fun notifyToAdapters(rightLetterAdapter: LetterAdapter, wrongPositionLetterAdapter: LetterAdapter, wrongLetterAdapter: LetterAdapter, wordAdapter: WordAdapter) {
+        rightLetterAdapter.notifyDataSetChanged()
+        wrongPositionLetterAdapter.notifyDataSetChanged()
+        wrongLetterAdapter.notifyDataSetChanged()
+        wordAdapter.notifyItemInserted(wordList.size - 1)
     }
 
     private fun calculateInput(input: String) {
